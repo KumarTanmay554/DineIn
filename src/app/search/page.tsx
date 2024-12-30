@@ -45,6 +45,7 @@ const fetchRestaurants = async (searchParams:SearchParams)=>{
     location:true,
     cuisine:true,
     slug:true,
+    reviews:true,
     
   }
  
