@@ -29,7 +29,7 @@ export default function RestaurantCards({restaurant}:Props){
               <Price price={restaurant.price}/>
               <p>{restaurant.location.name}</p>
             </div>
-            <p className="text-sm mt-1 font-bold">Booked 3 times today</p>
+            {/* <p className="text-sm mt-1 font-bold">Booked 3 times today</p> */}
           </div>
             </Link>
         </div>
