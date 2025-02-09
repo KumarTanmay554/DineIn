@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-// import * as jwwt from "jose"
 import jwt from "jsonwebtoken"
 import { PrismaClient } from "@prisma/client";
 
@@ -8,7 +7,7 @@ const prisma = new PrismaClient();
 export default async function handler(req: NextApiRequest, res:NextApiResponse) {
     const tokenbearer = req.headers.authorization as string;
     if(!tokenbearer){
-        return res.status(401).json({error:"Unauthorized Request: No Token Provided"})
+        return res.status(401).json({error:"Unauthorized Request: No Token Provided"});
     }
 
     const token = tokenbearer.split(" ")[1];

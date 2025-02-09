@@ -3,6 +3,7 @@ import React, { createContext, useEffect, useState } from 'react';
 // import useAuth from '../../../hooks/useAuth';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
+import { fetchClient } from '../../../utils/fetch';
 
 interface User{
     id:number;
@@ -40,21 +41,35 @@ export default function AuthContext({children}:{children:React.ReactNode}){
     const fetchUser=async()=>{
         setAuthState({loading:true,data:null,error:null})
         try{
-            const jwt = getCookie("jwt");
+            const jwt = getCookie("token");
             if(!jwt){
-                setAuthState({loading:false,data:null,error:"User not found"})
+                setAuthState({loading:false,data:null,error:"User not found"});
+                return;
             }
-            const res = await axios.get("https://localhost:3000/api/auth/tokenuse",{
+            const {data,error} = await fetchClient("http://localhost:3000/api/auth/tokenuse","GET",{
                 headers:{
                     Authorization:`Bearer ${jwt}`
-                }
+                },
+                body: null
             })
+            // const res = await axios.get("http://localhost:3000/api/auth/tokenuse",{
+            //     headers:{
+            //         Authorization:`Bearer ${jwt}`
+            //     }
+            // })
+
+            if(error){
+                setAuthState({loading:false,data:null,error:error.message??error.error??error})
+            }else{
+                axios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
+                setAuthState({loading:false, data:data,error:null});
+
+            }
 
             // Set the token in the axios header
-            axios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`
 
             // console.log(res.data)
-            setAuthState({loading:false,data:res.data,error:null})
+            // setAuthState({loading:false,data:res.data,error:null})
         }catch(error:any){
             console.log({error})
             setAuthState({loading:false,data:null,error:error.response})

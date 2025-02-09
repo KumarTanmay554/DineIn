@@ -7,6 +7,7 @@ const useAuth = () => {
   // User ka data global rakhna samaj, loading state sirf ek jagah rakni chaiye
   // Header
   const { data, error, loading, setAuthState } = useContext(Authcontext);
+
   //   Signin
   const signin = async ({
     email,
@@ -17,11 +18,11 @@ const useAuth = () => {
   }) => {
     setAuthState({ loading: true, data: null, error: null });
     try {
-      const res = await axios.post("https://localhost:3000/api/auth/signin", {
+      const res = await axios.post("http://localhost:3000/api/auth/signin", {
         email,
         password,
       });
-      console.log(res);
+      // console.log(res);
       setAuthState({ loading: false, data: res.data, error: null });
     } catch (error: any) {
       // todo
@@ -51,7 +52,7 @@ const useAuth = () => {
   }) => {
     try {
       // ;-)
-      const res = await axios.post("https://localhost:3000/api/auth/signup", {
+      const res = await axios.post("http://localhost:3000/api/auth/signup", {
         email,
         password,
         firstName,
@@ -72,7 +73,8 @@ const useAuth = () => {
 
   //   Logout
   const logout = () => {
-    deleteCookie("jwt");
+    deleteCookie("token");
+    
     setAuthState({ loading: false, data: null, error: null });
   };
   return { signin, signup, logout };

@@ -6,6 +6,8 @@ import React, { useEffect, useState, useContext } from 'react'
 import useAuth from '../../../hooks/useAuth';
 import { Authcontext } from '../context/AuthContext';
 import { Progress } from '@/components/ui/progress';
+import { useRouter } from 'next/navigation';
+import signup from '../../../pages/api/auth/signup';
 
 // import { validationSchema } from '../../../pages/api/auth/signup';
 // import { handleRegister } from '@/actions/sign';
@@ -19,25 +21,42 @@ export default function RegisterForm() {
         city:"",
         phone:"",
   });
+  const [loading,setLoading] = useState(false);
+  const [error,setError] = useState("");
 
-  const {error,loading,data,setAuthState} = useContext(Authcontext);
-  const {signup} = useAuth();
+  // const {error,loading,data,setAuthState} = useContext(Authcontext);
+  // const {signup} = useAuth();
+  const router = useRouter();
   // const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [disabled,setDisable] = useState(true);
+  // const [disabled,setDisable] = useState(true);
+  const disabled = input.email === "" || input.password === "" || input.firstName === "" || input.lastName === "" || input.city === "" || input.phone === "" || loading;
 
-  useEffect(()=>{
-    // const allFieldsFilled = Object.values(input).every(field => field.length > 0);
-    //  setDisable(!allFieldsFilled);
-    if(input.email.length>0 && input.password.length>0 && input.firstName.length>0 && input.lastName.length>0 && input.city.length>0 && input.phone.length>0){
-      return setDisable(false);
-    }else{
-      return setDisable(true);
-    }
-  }, [input]);
+  // useEffect(()=>{
+  //   if(input.email.length>0 && input.password.length>0 && input.firstName.length>0 && input.lastName.length>0 && input.city.length>0 && input.phone.length>0){
+  //     return setDisable(false);
+  //   }else{
+  //     return setDisable(true);
+  //   }
+  // }, [input]);
 
   
-    const handleClick = ()=>{
-      signup({email:input.email,password:input.password,firstName:input.firstName,lastName:input.lastName,city:input.city,phone:input.phone});
+    const handleClick = async()=>{
+      setLoading(true);
+      setError("");
+      try {
+        const {email,password,firstName,lastName,city,phone} = input;
+        const {data,error} = await signup({email,password,firstName,lastName,city,phone});
+        if(error){
+          setError(error?.message ?? error?.error ?? error);
+          return;
+        }
+      }catch(error:any){
+        setError(error?.message ?? error?.error ?? error);
+      }finally{
+        setLoading(false);
+      }
+      // signup({email:input.email,password:input.password,firstName:input.firstName,lastName:input.lastName,city:input.city,phone:input.phone});
+      // router.push("/");
     }
 
   return (
@@ -127,6 +146,16 @@ export default function RegisterForm() {
               }}
             />
           </div>
+          {loading && (
+            <div>
+              <Progress value={90} />
+            </div>
+          )}
+          {error && (
+            <div className='bg-red-100 text-red-600 p-2 rounded-md'>
+              {error}
+            </div>
+          )}
           <Button
             type="submit"
             className="bg-red-600"

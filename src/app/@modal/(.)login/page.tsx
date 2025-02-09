@@ -21,7 +21,9 @@ export default function LoginPage() {
         <DialogHeader>
           <DialogTitle className="text-center">Sign In</DialogTitle> 
         </DialogHeader>
+
         <LoginForm />
+        
       </DialogContent>
     </Dialog>
   );
