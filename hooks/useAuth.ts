@@ -2,11 +2,14 @@ import { Authcontext } from "@/app/context/AuthContext";
 import axios from "axios";
 import { deleteCookie, getCookie } from "cookies-next";
 import { useContext } from "react";
+import { fetchClientServerAction } from "../utils/fetch";
+import { useRouter } from "next/navigation";
 
 const useAuth = () => {
   // User ka data global rakhna samaj, loading state sirf ek jagah rakni chaiye
   // Header
   const { data, error, loading, setAuthState } = useContext(Authcontext);
+  const router = useRouter();
 
   //   Signin
   const signin = async ({
@@ -17,19 +20,44 @@ const useAuth = () => {
     password: string;
   }) => {
     setAuthState({ loading: true, data: null, error: null });
+    const action = async()=>{
+      return await fetchClientServerAction(async()=>{
+        const res = await fetch("http://localhost:3000/api/auth/signin",
+          {
+            method:"POST",
+            headers:{
+              "Content-Type":"application/json"
+            },
+            body:JSON.stringify({email,password})
+          }
+        )
+        const data = await res.json();
+        if(!res.ok){
+          return {error:data.error}
+        }
+        return {data}
+      })
+    };
+
     try {
-      const res = await axios.post("http://localhost:3000/api/auth/signin", {
-        email,
-        password,
-      });
+      const {data: res, error:resError} = await action();
+      if(resError){
+        setAuthState({
+          loading:false,
+          data:null,
+          error:resError
+        })
+      }else{
+        setAuthState({loading:false,data:res,error:null})
+        router.refresh();
+      }
       // console.log(res);
-      setAuthState({ loading: false, data: res.data, error: null });
     } catch (error: any) {
       // todo
       setAuthState({
         loading: false,
         data: null,
-        error: error.response ? error.response.data.error : error.message,
+        error: error.response ? error.response.data.error : error.message && "signin failed",
       });
     }
   };
@@ -52,21 +80,22 @@ const useAuth = () => {
   }) => {
     try {
       // ;-)
-      const res = await axios.post("http://localhost:3000/api/auth/signup", {
-        email,
-        password,
-        firstName,
-        lastName,
-        city,
-        phone,
+      const res = await fetch("http://localhost:3000/api/auth/signup",{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({email,password,firstName,lastName,city,phone})
       });
-      console.log("Signup response:", res.data);
-      setAuthState({ loading: false, data: res.data, error: null });
+      console.log("Signup response:", res);
+      const resd = await res.json()
+      setAuthState({ loading: false, data: resd, error: null });
+      router.refresh();
     } catch (error: any) {
       setAuthState({
         loading: false,
         data: null,
-        error: error.response ? error.response.data.error : error.message,
+        error: error.response ? error.response.data.error : error.message && "signup failed",
       });
     }
   };
@@ -76,6 +105,7 @@ const useAuth = () => {
     deleteCookie("token");
     
     setAuthState({ loading: false, data: null, error: null });
+    router.refresh();
   };
   return { signin, signup, logout };
 };

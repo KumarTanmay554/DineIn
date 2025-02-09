@@ -3,7 +3,8 @@ import React, { createContext, useEffect, useState } from 'react';
 // import useAuth from '../../../hooks/useAuth';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
-import { fetchClient } from '../../../utils/fetch';
+// import { fetchClient } from '../../../utils/fetch';
+import { getuserbyToken } from '../../../pages/api/auth/tokenuse';
 
 interface User{
     id:number;
@@ -46,12 +47,7 @@ export default function AuthContext({children}:{children:React.ReactNode}){
                 setAuthState({loading:false,data:null,error:"User not found"});
                 return;
             }
-            const {data,error} = await fetchClient("http://localhost:3000/api/auth/tokenuse","GET",{
-                headers:{
-                    Authorization:`Bearer ${jwt}`
-                },
-                body: null
-            })
+            const {data,error} = await getuserbyToken();
             // const res = await axios.get("http://localhost:3000/api/auth/tokenuse",{
             //     headers:{
             //         Authorization:`Bearer ${jwt}`
@@ -79,6 +75,7 @@ export default function AuthContext({children}:{children:React.ReactNode}){
     useEffect(()=>{fetchUser()},[])
     return (
         <Authcontext.Provider value={{...authState,setAuthState}}>
+            {/* {JSON.stringify(authState)} */}
             {children}
         </Authcontext.Provider>
     )
