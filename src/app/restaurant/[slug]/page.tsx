@@ -58,7 +58,7 @@ export default async function RestaurantDetails({params,}: {params:{slug: string
         <Reviews reviews={restaurant.reviews} />
       </div>
       <div className="w-[27%] sticky top-0 text-reg">
-        <ReservationCard openingHours={restaurant.open_time} closingHours={restaurant.close_time} slug={restaurant.slugc} />
+        <ReservationCard openingHours={restaurant.open_time} closingHours={restaurant.close_time} slug={restaurant.slug} />
       </div>
     </>
 
