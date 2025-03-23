@@ -1,6 +1,5 @@
 import { Authcontext } from "@/app/context/AuthContext";
-import axios from "axios";
-import { deleteCookie, getCookie } from "cookies-next";
+import { deleteCookie } from "cookies-next";
 import { useContext } from "react";
 import { fetchClientServerAction } from "../utils/fetch";
 import { useRouter } from "next/navigation";
@@ -49,7 +48,7 @@ const useAuth = () => {
         })
       }else{
         setAuthState({loading:false,data:res,error:null})
-        router.refresh();
+        router.push("/");
       }
       // console.log(res);
     } catch (error: any) {
@@ -90,7 +89,7 @@ const useAuth = () => {
       console.log("Signup response:", res);
       const resd = await res.json()
       setAuthState({ loading: false, data: resd, error: null });
-      router.refresh();
+      router.push("/");
     } catch (error: any) {
       setAuthState({
         loading: false,

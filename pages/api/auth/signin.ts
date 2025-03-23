@@ -1,6 +1,5 @@
 "use server";
 import { PrismaClient } from "@prisma/client";
-import { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import * as jwt from "jose";

@@ -1,7 +1,5 @@
 "use server";
-import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
-import { cookies } from "next/headers";
 import tokenChecker from "@/app/middlewares/token-checker";
 
 const prisma = new PrismaClient();

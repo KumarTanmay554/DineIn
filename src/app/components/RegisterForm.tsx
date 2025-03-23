@@ -62,7 +62,7 @@ export default function RegisterForm() {
   return (
     <div>
       {loading ? (
-        <Progress value={33} />
+        <Progress value={90} />
 
       ) : (
         

@@ -12,7 +12,6 @@ export interface RestaurantCardType{
   price: PRICE;
   slug: string;
   reviews: Review[];
-
 }
 
 const prisma = new PrismaClient();
